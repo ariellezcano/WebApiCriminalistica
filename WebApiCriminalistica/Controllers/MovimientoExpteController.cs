@@ -14,21 +14,20 @@ namespace WebApiCriminalistica.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EstadosController : ControllerBase
+    public class MovimientoExpteController : ControllerBase
     {
         private readonly WebApiCriminalisticaContext _context;
 
-        public Result<Estados> res = new Result<Estados>();
+        public Result<MovimientoExpte> res = new Result<MovimientoExpte>();
         string data;
-
-        public EstadosController(WebApiCriminalisticaContext context)
+        public MovimientoExpteController(WebApiCriminalisticaContext context)
         {
             _context = context;
         }
 
-        // GET: api/Estados
+        // GET: api/MovimientoExpte/1,2
         [HttpGet("paginate/{pagina},{cantidad}")]
-        public async Task<ActionResult<Result<Estados>>> GetEstados(int pagina, int cantidad)
+        public async Task<ActionResult<Result<MovimientoExpte>>> GetMovimientoExpte(int pagina, int cantidad)
         {
             Paginate paginate = new Paginate();
             paginate.cantidadMostrar = cantidad;
@@ -38,10 +37,10 @@ namespace WebApiCriminalistica.Controllers
             {
                 try
                 {
-                    var queryable = DBcontext.Estados
+                    var queryable = DBcontext.MovimientoExpte
                         .AsNoTracking()
                         .Where(t => t.activo == true)
-                        .OrderBy(o => o.nombre)
+                        .OrderBy(o => o.expedienteNavegacion.fechaExpte)
                         .AsQueryable();
 
                     double conteo = await queryable.CountAsync();
@@ -77,17 +76,18 @@ namespace WebApiCriminalistica.Controllers
             }
         }
 
-        // GET: api/Estados/5
+
+        // GET: api/MovimientoExpte/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Estados>> GetEstado(int id)
+        public async Task<ActionResult<MovimientoExpte>> GetMovimientoExpte(int id)
         {
             using (var DBcontext = _context)
             {
                 try
                 {
-                    var obj = DBcontext.Estados
+                    var obj = DBcontext.MovimientoExpte
                         .AsNoTracking()
-                        .SingleOrDefault(r => r.id == id && r.activo == true);
+                        .SingleOrDefault(r => r.id == id);
 
                     if (obj != null)
                     {
@@ -112,20 +112,25 @@ namespace WebApiCriminalistica.Controllers
                 return Ok(data);
             }
         }
-        
-        // PUT: api/Estados/5
+
+        // PUT: api/MovimientoExpte/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEstado(int id, Estados estado)
+        public async Task<IActionResult> PutMovimientoExpte(int id, MovimientoExpte expte)
         {
             using (var DBcontext = _context)
             {
                 try
                 {
-                    var obj = DBcontext.Estados.FirstOrDefault(r => r.id == id);
+                    var obj = DBcontext.MovimientoExpte.FirstOrDefault(r => r.id == id);
                     if (obj != null)
                     {
-                        obj.nombre = estado.nombre;
+                        obj.destinoPolicial = expte.destinoPolicial;
+                        obj.destinoNoPolicial = expte.destinoNoPolicial;
+                        obj.tipoMovimiento = expte.tipoMovimiento;
+                        obj.fechaRecepcion = expte.fechaRecepcion;
+                        obj.usuarioRecibe = expte.usuarioRecibe;
+                        obj.observaciones = expte.observaciones;
 
                         DBcontext.Entry(obj).State = EntityState.Modified;
                         await DBcontext.SaveChangesAsync();
@@ -150,29 +155,50 @@ namespace WebApiCriminalistica.Controllers
                 return Ok(data);
             }
         }
-               
-        // POST: api/Estados
+
+        // POST: api/MovimientoExpte
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Estados>> PostEstado(Estados estados)
+        public async Task<ActionResult<MovimientoExpte>> PostMovimientoExpte(MovimientoExpte expte)
         {
-            var nombre = estados.nombre;
+            var expediente = expte.expte;
+            var tipoMoviento = expte.tipoMovimiento;
+
             using (var DBcontext = _context)
             {
                 try
                 {
-                    var verificar = DBcontext.Estados.SingleOrDefault(r => r.nombre == nombre);
+                    var verificar = DBcontext.MovimientoExpte.SingleOrDefault(r => r.expte == expediente && r.activo == true);
 
                     if (verificar is null)
                     {
-                        Estados obj = new Estados();
-                        obj.nombre = nombre;
-                        obj.activo = true;
-
-                        DBcontext.Estados.Add(obj);
+                        if (tipoMoviento == "ENTRADA") { 
+                            MovimientoExpte obj = new MovimientoExpte();
+                            obj.expte = expediente;
+                            obj.destinoPolicial = expte.destinoPolicial;
+                            obj.destinoNoPolicial = expte.destinoNoPolicial;
+                            obj.usuarioEnvia = expte.usuarioEnvia;
+                            obj.tipoMovimiento = expte.tipoMovimiento;
+                            obj.observaciones = expte.observaciones;
+                            obj.fechaEnvio = DateTime.Now;
+                            obj.activo = true;
+                        }
+                        if (tipoMoviento == "RECEPCION") 
+                        {
+                            MovimientoExpte obj = new MovimientoExpte();
+                            obj.expte = expediente;
+                            obj.destinoPolicial = expte.destinoPolicial;
+                            obj.destinoNoPolicial = expte.destinoNoPolicial;
+                            obj.usuarioEnvia = expte.usuarioEnvia;
+                            obj.tipoMovimiento = expte.tipoMovimiento;
+                            obj.observaciones = expte.observaciones;
+                            obj.fechaEnvio = DateTime.Now;
+                            obj.activo = true;
+                        }
+                        DBcontext.MovimientoExpte.Add(obj);
                         await DBcontext.SaveChangesAsync();
 
-                        //res.dato = obj;
+                        res.dato = obj;
                         res.code = "200";
                         res.message = "Dato insertado correctamente";
                     }
@@ -195,15 +221,15 @@ namespace WebApiCriminalistica.Controllers
             }
         }
 
-        // DELETE: api/Estados/5
+        // DELETE: api/MovimientoExpte/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEstados(int id)
+        public async Task<IActionResult> DeleteMovimientoExpte(int id)
         {
             using (var DBcontext = _context)
             {
                 try
                 {
-                    var obj = DBcontext.Estados.SingleOrDefault(r => r.id == id);
+                    var obj = DBcontext.MovimientoExpte.SingleOrDefault(r => r.id == id);
 
                     if (obj != null)
                     {
@@ -240,9 +266,9 @@ namespace WebApiCriminalistica.Controllers
             }
         }
 
-        // GET: api/Sistemas/filterSistemas/{criterio}
-        [HttpGet("filterEstado/{criterio}")]
-        public async Task<ActionResult<Estados>> filter(string criterio)
+        // GET: api/MovimientoExpte/filterMovimientoExpte/{criterio}
+        [HttpGet("filterMovimientoExpte/{criterio}")]
+        public async Task<ActionResult<MovimientoExpte>> filter(string criterio)
         {
             try
             {
@@ -250,9 +276,9 @@ namespace WebApiCriminalistica.Controllers
                 {
                     if (!String.IsNullOrEmpty(criterio))
                     {
-                        var busqueda = await DBcontext.Estados
+                        var busqueda = await DBcontext.MovimientoExpte
                             .AsNoTracking()
-                            .Where(s => s.nombre.Contains(criterio) && s.activo == true)
+                            .Where(s => s.expedienteNavegacion.nroIntervencion.Contains(criterio) || s.expedienteNavegacion.nroNota.Contains(criterio) && s.activo == true)
                             .ToListAsync();
 
                         if (busqueda.Count > 0)
@@ -282,9 +308,86 @@ namespace WebApiCriminalistica.Controllers
             return Ok(data);
         }
 
-        private bool EstadosExists(int id)
+        [HttpGet("filterBusqAvanzada/{fecha1},{fecha2},{nroIntervencion},{nroNota}")]
+        public async Task<ActionResult<Result<MovimientoExpte>>> FiltroBusquedaAvanzada(
+            string fecha1, string fecha2, string nroIntervencion, string nroNota)
         {
-            return _context.Estados.Any(e => e.id == id);
+
+            try
+            {
+                using (var DBcontext = _context)
+                {
+
+                    var planillaQueryable = DBcontext.MovimientoExpte.AsQueryable();
+
+                    if (fecha1 != null && fecha2 != null)
+                    {
+                        var fechaExpt1 = Convert.ToDateTime(fecha1);
+                        var fechaExpt2 = Convert.ToDateTime(fecha2);
+
+                        planillaQueryable = planillaQueryable.Where(f => f.expedienteNavegacion.fechaExpte >= fechaExpt1 && f.expedienteNavegacion.fechaExpte <= fechaExpt2);
+
+                    }
+                    else if (fecha1 != null && fecha2 == "fechaVacia")
+                    {
+                        fecha1 = fecha2;
+                        var fechaExpt1 = Convert.ToDateTime(fecha1);
+                        planillaQueryable = planillaQueryable.Where(f => f.expedienteNavegacion.fechaExpte == fechaExpt1);
+
+                    }
+                    if (!String.IsNullOrEmpty(nroIntervencion))
+                    {
+
+                        planillaQueryable = planillaQueryable.Where(d => d.expedienteNavegacion.nroIntervencion == nroIntervencion);
+
+                    }
+                    if (!String.IsNullOrEmpty(nroNota))
+                    {
+
+                        planillaQueryable = planillaQueryable.Where(l => l.expedienteNavegacion.nroNota == nroNota);
+
+                    }
+
+
+                    var planilla = await planillaQueryable
+                        .Include(e => e.expedienteNavegacion.estadoNavegacion)
+                        .Include(uC => uC.expedienteNavegacion.usuarioCreaNavegacion)
+                        .Include(uM => uM.expedienteNavegacion.usuarioModificaNavegacion)
+                        //.Include(de => de.usuarioBajaNavegacion)
+                        .AsNoTracking()
+                        .Where(a => a.activo == true)
+                        .OrderBy(ordenar => ordenar.expedienteNavegacion.fechaExpte)
+                        .ToListAsync();
+
+                    if (planilla.Count > 0)
+                    {
+                        res.data = planilla;
+                        res.code = "200";
+                        res.message = "Busqueda realizada correctamente";
+                    }
+                    else
+                    {
+                        res.code = "204";
+                        res.message = "No existe el dato de búsqueda";
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                res.code = "500";
+                res.message = "No se pudo realizar la busqueda de datos";
+                res.error = "Error al obtener los datos " + ex.Message;
+            }
+
+            data = JsonConvert.SerializeObject(res);
+
+            return Ok(data);
+        }
+
+        private bool MovimientoExpteExists(int id)
+        {
+            return _context.MovimientoExpte.Any(e => e.id == id);
         }
     }
 }

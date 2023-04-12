@@ -23,5 +23,13 @@ namespace WebApiCriminalistica.Data
         public DbSet<WebApiCriminalistica.Models.Estados> Estados { get; set; } = default!;
 
         public DbSet<WebApiCriminalistica.Models.Rol> Rol { get; set; }
+
+        public DbSet<WebApiCriminalistica.Models.UnidadSistema> UnidadSistema { get; set; }
+
+        public DbSet<WebApiCriminalistica.Models.UsuarioCriminalistica> UsuarioCriminalistica { get; set; }
+
+        public DbSet<WebApiCriminalistica.Models.Expediente> Expediente { get; set; }
+
+        public DbSet<WebApiCriminalistica.Models.MovimientoExpte> MovimientoExpte { get; set; }
     }
 }

@@ -14,53 +14,37 @@ namespace WebApiCriminalistica.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EstadosController : ControllerBase
+    public class UnidadSistemaController : ControllerBase
     {
         private readonly WebApiCriminalisticaContext _context;
 
-        public Result<Estados> res = new Result<Estados>();
+        public Result<UnidadSistema> res = new Result<UnidadSistema>();
         string data;
 
-        public EstadosController(WebApiCriminalisticaContext context)
+        public UnidadSistemaController(WebApiCriminalisticaContext context)
         {
             _context = context;
         }
 
-        // GET: api/Estados
-        [HttpGet("paginate/{pagina},{cantidad}")]
-        public async Task<ActionResult<Result<Estados>>> GetEstados(int pagina, int cantidad)
+        // GET: api/UnidadSistema
+        [HttpGet("obtenerDatos")]
+        public async Task<ActionResult<Result<UnidadSistema>>> GetSistema()
         {
-            Paginate paginate = new Paginate();
-            paginate.cantidadMostrar = cantidad;
-            paginate.pagina = pagina;
-
             using (var DBcontext = _context)
             {
                 try
                 {
-                    var queryable = DBcontext.Estados
-                        .AsNoTracking()
-                        .Where(t => t.activo == true)
-                        .OrderBy(o => o.nombre)
-                        .AsQueryable();
+                    var datos = await DBcontext.UnidadSistema.ToListAsync();
 
-                    double conteo = await queryable.CountAsync();
-                    double TotalPaginas = Math.Ceiling(conteo / paginate.cantidadMostrar);
-
-                    int totalPaginas = Convert.ToInt32(TotalPaginas);
-                    int totalRegistros = Convert.ToInt32(conteo);
-
-                    if (queryable != null)
+                    if (datos.Count > 0)
                     {
-                        res.data = queryable.Paginar(paginate).ToList();
-                        res.totalRegistros = totalRegistros;
-                        res.totalPaginas = totalPaginas;
+                        res.data = datos;
                         res.code = "200";
                         res.message = "Datos obtenidos correctamente";
                     }
-                    else if (queryable is null)
+                    else if (datos.Count < 0)
                     {
-                        res.data = queryable.ToList();
+                        res.data = datos;
                         res.code = "204";
                         res.message = "No existen datos en la base de datos";
                     }
@@ -77,25 +61,22 @@ namespace WebApiCriminalistica.Controllers
             }
         }
 
-        // GET: api/Estados/5
+        // GET: api/UnidadSistema/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Estados>> GetEstado(int id)
+        public async Task<ActionResult<UnidadSistema>> GetUnidadSistema(int id)
         {
             using (var DBcontext = _context)
             {
                 try
                 {
-                    var obj = DBcontext.Estados
-                        .AsNoTracking()
-                        .SingleOrDefault(r => r.id == id && r.activo == true);
-
+                    var obj = DBcontext.UnidadSistema.SingleOrDefault(r => r.id == id);
                     if (obj != null)
                     {
                         res.dato = obj;
                         res.code = "200";
                         res.message = "Dato obtenido correctamente";
                     }
-                    else if (obj is null)
+                    else if (obj == null)
                     {
                         res.dato = obj;
                         res.code = "204";
@@ -112,20 +93,20 @@ namespace WebApiCriminalistica.Controllers
                 return Ok(data);
             }
         }
-        
-        // PUT: api/Estados/5
+
+        // PUT: api/UnidadSistema/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEstado(int id, Estados estado)
+        public async Task<IActionResult> PutUnidadSistema(int id, UnidadSistema unidad)
         {
             using (var DBcontext = _context)
             {
                 try
                 {
-                    var obj = DBcontext.Estados.FirstOrDefault(r => r.id == id);
+                    var obj = DBcontext.UnidadSistema.FirstOrDefault(r => r.id == id);
                     if (obj != null)
                     {
-                        obj.nombre = estado.nombre;
+                        obj.nombre = unidad.nombre;
 
                         DBcontext.Entry(obj).State = EntityState.Modified;
                         await DBcontext.SaveChangesAsync();
@@ -134,7 +115,7 @@ namespace WebApiCriminalistica.Controllers
                         res.code = "200";
                         res.message = "Dato modificado correctamente";
                     }
-                    else if (obj is null)
+                    else if (obj == null)
                     {
                         res.code = "204";
                         res.message = "No existen datos en la base de datos";
@@ -150,29 +131,27 @@ namespace WebApiCriminalistica.Controllers
                 return Ok(data);
             }
         }
-               
-        // POST: api/Estados
+
+        // POST: api/UnidadSistema
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Estados>> PostEstado(Estados estados)
+        public async Task<ActionResult<UnidadSistema>> PostUnidadSistema(UnidadSistema unidad)
         {
-            var nombre = estados.nombre;
+            var nombre = unidad.nombre;
             using (var DBcontext = _context)
             {
                 try
                 {
-                    var verificar = DBcontext.Estados.SingleOrDefault(r => r.nombre == nombre);
+                    var verificar = DBcontext.UnidadSistema.SingleOrDefault(r => r.nombre == nombre);
 
                     if (verificar is null)
                     {
-                        Estados obj = new Estados();
-                        obj.nombre = nombre;
-                        obj.activo = true;
+                        UnidadSistema obj = new UnidadSistema();
+                        obj.nombre = unidad.nombre;
 
-                        DBcontext.Estados.Add(obj);
+                        DBcontext.UnidadSistema.Add(obj);
                         await DBcontext.SaveChangesAsync();
 
-                        //res.dato = obj;
                         res.code = "200";
                         res.message = "Dato insertado correctamente";
                     }
@@ -195,20 +174,19 @@ namespace WebApiCriminalistica.Controllers
             }
         }
 
-        // DELETE: api/Estados/5
+        // DELETE: api/UnidadSistema/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEstados(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             using (var DBcontext = _context)
             {
                 try
                 {
-                    var obj = DBcontext.Estados.SingleOrDefault(r => r.id == id);
+                    var obj = DBcontext.Rol.SingleOrDefault(r => r.id == id);
 
                     if (obj != null)
                     {
                         //baja logica
-                        //entidad entity = DBcontext.entidad.SingleOrDefault(r => r.id == id);
                         obj.activo = false;
                         DBcontext.Entry(obj).State = EntityState.Modified;
                         await DBcontext.SaveChangesAsync();
@@ -240,51 +218,9 @@ namespace WebApiCriminalistica.Controllers
             }
         }
 
-        // GET: api/Sistemas/filterSistemas/{criterio}
-        [HttpGet("filterEstado/{criterio}")]
-        public async Task<ActionResult<Estados>> filter(string criterio)
+        private bool UnidadSistemaExists(int id)
         {
-            try
-            {
-                using (var DBcontext = _context)
-                {
-                    if (!String.IsNullOrEmpty(criterio))
-                    {
-                        var busqueda = await DBcontext.Estados
-                            .AsNoTracking()
-                            .Where(s => s.nombre.Contains(criterio) && s.activo == true)
-                            .ToListAsync();
-
-                        if (busqueda.Count > 0)
-                        {
-                            res.data = busqueda;
-                            res.code = "200";
-                            res.message = "Búsqueda realizada correctamente";
-                        }
-                        else
-                        {
-                            res.data = busqueda;
-                            res.code = "204";
-                            res.message = "No se encontro los datos en la base de datos";
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                res.code = "500";
-                res.message = "No se pudo realizar la busqueda de datos";
-                res.error = "Error al obtener los datos " + ex.Message;
-            }
-
-            data = JsonConvert.SerializeObject(res);
-
-            return Ok(data);
-        }
-
-        private bool EstadosExists(int id)
-        {
-            return _context.Estados.Any(e => e.id == id);
+            return _context.UnidadSistema.Any(e => e.id == id);
         }
     }
 }

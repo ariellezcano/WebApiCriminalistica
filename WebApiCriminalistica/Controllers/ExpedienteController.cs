@@ -14,21 +14,21 @@ namespace WebApiCriminalistica.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EstadosController : ControllerBase
+    public class ExpedienteController : ControllerBase
     {
         private readonly WebApiCriminalisticaContext _context;
 
-        public Result<Estados> res = new Result<Estados>();
+        public Result<Expediente> res = new Result<Expediente>();
         string data;
 
-        public EstadosController(WebApiCriminalisticaContext context)
+        public ExpedienteController(WebApiCriminalisticaContext context)
         {
             _context = context;
         }
 
-        // GET: api/Estados
+        // GET: api/Expediente/1,2
         [HttpGet("paginate/{pagina},{cantidad}")]
-        public async Task<ActionResult<Result<Estados>>> GetEstados(int pagina, int cantidad)
+        public async Task<ActionResult<Result<Expediente>>> GetExpediente(int pagina, int cantidad)
         {
             Paginate paginate = new Paginate();
             paginate.cantidadMostrar = cantidad;
@@ -38,10 +38,10 @@ namespace WebApiCriminalistica.Controllers
             {
                 try
                 {
-                    var queryable = DBcontext.Estados
+                    var queryable = DBcontext.Expediente
                         .AsNoTracking()
                         .Where(t => t.activo == true)
-                        .OrderBy(o => o.nombre)
+                        .OrderBy(o => o.fechaExpte)
                         .AsQueryable();
 
                     double conteo = await queryable.CountAsync();
@@ -77,17 +77,17 @@ namespace WebApiCriminalistica.Controllers
             }
         }
 
-        // GET: api/Estados/5
+        // GET: api/Expediente/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Estados>> GetEstado(int id)
+        public async Task<ActionResult<Expediente>> GetExpediente(int id)
         {
             using (var DBcontext = _context)
             {
                 try
                 {
-                    var obj = DBcontext.Estados
+                    var obj = DBcontext.Expediente
                         .AsNoTracking()
-                        .SingleOrDefault(r => r.id == id && r.activo == true);
+                        .SingleOrDefault(r => r.id == id);
 
                     if (obj != null)
                     {
@@ -112,20 +112,31 @@ namespace WebApiCriminalistica.Controllers
                 return Ok(data);
             }
         }
-        
-        // PUT: api/Estados/5
+
+        // PUT: api/Expediente/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEstado(int id, Estados estado)
+        public async Task<IActionResult> PutExpediente(int id, Expediente expediente)
         {
             using (var DBcontext = _context)
             {
                 try
                 {
-                    var obj = DBcontext.Estados.FirstOrDefault(r => r.id == id);
+                    var obj = DBcontext.Expediente.FirstOrDefault(r => r.id == id);
                     if (obj != null)
                     {
-                        obj.nombre = estado.nombre;
+                        obj.fechaExpte = expediente.fechaExpte;
+                        obj.nroNota = expediente.nroNota;
+                        obj.origenExpte = expediente.origenExpte;
+                        obj.extracto = expediente.extracto;
+                        obj.nroIntervencion = expediente.nroIntervencion;
+                        obj.informeTecnico = expediente.informeTecnico;
+                        obj.peritoInterviniente = expediente.peritoInterviniente;
+                        obj.tipoPericia = expediente.tipoPericia;
+                        obj.estadoExpte = expediente.estadoExpte;
+                        obj.observaciones = expediente.observaciones;
+                        obj.fechaModificacion = expediente.fechaModificacion;
+                        obj.usuarioModifica = expediente.usuarioModifica;
 
                         DBcontext.Entry(obj).State = EntityState.Modified;
                         await DBcontext.SaveChangesAsync();
@@ -150,29 +161,40 @@ namespace WebApiCriminalistica.Controllers
                 return Ok(data);
             }
         }
-               
-        // POST: api/Estados
+
+        // POST: api/Expediente
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Estados>> PostEstado(Estados estados)
+        public async Task<ActionResult<Expediente>> PostEstado(Expediente expte)
         {
-            var nombre = estados.nombre;
+            var nota = expte.nroNota;
             using (var DBcontext = _context)
             {
                 try
                 {
-                    var verificar = DBcontext.Estados.SingleOrDefault(r => r.nombre == nombre);
+                    var verificar = DBcontext.Expediente.SingleOrDefault(r => r.nroNota == nota);
 
                     if (verificar is null)
                     {
-                        Estados obj = new Estados();
-                        obj.nombre = nombre;
+                        Expediente obj = new Expediente();
+                        obj.fechaExpte = expte.fechaExpte;
+                        obj.nroNota = nota;
+                        obj.origenExpte = expte.origenExpte;
+                        obj.extracto = expte.extracto;
+                        obj.nroIntervencion = expte.nroIntervencion;
+                        obj.informeTecnico = expte.informeTecnico;
+                        obj.peritoInterviniente = expte.peritoInterviniente;
+                        obj.tipoPericia = expte.tipoPericia;
+                        obj.estadoExpte = expte.estadoExpte;
+                        obj.observaciones = expte.observaciones;
+                        obj.fechaCreacion = DateTime.Now;
+                        obj.usuarioCrea = expte.usuarioCrea;
                         obj.activo = true;
 
-                        DBcontext.Estados.Add(obj);
+                        DBcontext.Expediente.Add(obj);
                         await DBcontext.SaveChangesAsync();
 
-                        //res.dato = obj;
+                        res.dato = obj;
                         res.code = "200";
                         res.message = "Dato insertado correctamente";
                     }
@@ -195,20 +217,22 @@ namespace WebApiCriminalistica.Controllers
             }
         }
 
-        // DELETE: api/Estados/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEstados(int id)
+        // DELETE: api/Expediente/5
+        [HttpDelete("{id},{usuario}")]
+        public async Task<IActionResult> DeleteEstados(int id, int usuario)
         {
             using (var DBcontext = _context)
             {
                 try
                 {
-                    var obj = DBcontext.Estados.SingleOrDefault(r => r.id == id);
+                    var obj = DBcontext.Expediente.SingleOrDefault(r => r.id == id);
 
                     if (obj != null)
                     {
                         //baja logica
                         //entidad entity = DBcontext.entidad.SingleOrDefault(r => r.id == id);
+                        obj.fechaBaja = DateTime.Now;
+                        obj.usuarioBaja = usuario;
                         obj.activo = false;
                         DBcontext.Entry(obj).State = EntityState.Modified;
                         await DBcontext.SaveChangesAsync();
@@ -240,9 +264,9 @@ namespace WebApiCriminalistica.Controllers
             }
         }
 
-        // GET: api/Sistemas/filterSistemas/{criterio}
-        [HttpGet("filterEstado/{criterio}")]
-        public async Task<ActionResult<Estados>> filter(string criterio)
+        // GET: api/Expediente/filterExpediente/{criterio}
+        [HttpGet("filterExpediente/{criterio}")]
+        public async Task<ActionResult<Expediente>> filter(string criterio)
         {
             try
             {
@@ -250,9 +274,9 @@ namespace WebApiCriminalistica.Controllers
                 {
                     if (!String.IsNullOrEmpty(criterio))
                     {
-                        var busqueda = await DBcontext.Estados
+                        var busqueda = await DBcontext.Expediente
                             .AsNoTracking()
-                            .Where(s => s.nombre.Contains(criterio) && s.activo == true)
+                            .Where(s => s.nroIntervencion.Contains(criterio) || s.nroNota.Contains(criterio) && s.activo == true)
                             .ToListAsync();
 
                         if (busqueda.Count > 0)
@@ -282,9 +306,85 @@ namespace WebApiCriminalistica.Controllers
             return Ok(data);
         }
 
-        private bool EstadosExists(int id)
+        [HttpGet("filterBusqAvanzada/{fecha1},{fecha2},{nroIntervencion},{nroNota}")]
+        public async Task<ActionResult<Result<Expediente>>> FiltroBusquedaAvanzada(
+            string fecha1, string fecha2, string nroIntervencion, string nroNota)
         {
-            return _context.Estados.Any(e => e.id == id);
+
+            try
+            {
+                using (var DBcontext = _context)
+                {
+
+                    var planillaQueryable = DBcontext.Expediente.AsQueryable();
+
+                    if (fecha1 != null && fecha2 != null)
+                    {
+                        var fechaExpt1 = Convert.ToDateTime(fecha1);
+                        var fechaExpt2 = Convert.ToDateTime(fecha2);
+
+                        planillaQueryable = planillaQueryable.Where(f => f.fechaExpte >= fechaExpt1 && f.fechaExpte <= fechaExpt2);
+
+                    } else if (fecha1 != null && fecha2 == "fechaVacia") {
+                        fecha1 = fecha2;
+                        var fechaExpt1 = Convert.ToDateTime(fecha1);
+                        planillaQueryable = planillaQueryable.Where(f => f.fechaExpte == fechaExpt1);
+
+                    }
+                    if (!String.IsNullOrEmpty(nroIntervencion))
+                    {
+
+                        planillaQueryable = planillaQueryable.Where(d => d.nroIntervencion == nroIntervencion);
+
+                    }
+                    if (!String.IsNullOrEmpty(nroNota))
+                    {
+
+                        planillaQueryable = planillaQueryable.Where(l => l.nroNota == nroNota);
+
+                    }
+                    
+
+                    var planilla = await planillaQueryable
+                        .Include(e => e.estadoNavegacion)
+                        .Include(uC => uC.usuarioCreaNavegacion)
+                        .Include(uM => uM.usuarioModificaNavegacion)
+                        //.Include(de => de.usuarioBajaNavegacion)
+                        .AsNoTracking()
+                        .Where(a => a.activo == true)
+                        .OrderBy(ordenar => ordenar.fechaExpte)
+                        .ToListAsync();
+
+                    if (planilla.Count > 0)
+                    {
+                        res.data = planilla;
+                        res.code = "200";
+                        res.message = "Busqueda realizada correctamente";
+                    }
+                    else
+                    {
+                        res.code = "204";
+                        res.message = "No existe el dato de búsqueda";
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                res.code = "500";
+                res.message = "No se pudo realizar la busqueda de datos";
+                res.error = "Error al obtener los datos " + ex.Message;
+            }
+
+            data = JsonConvert.SerializeObject(res);
+
+            return Ok(data);
+        }
+
+
+        private bool ExpedienteExists(int id)
+        {
+            return _context.Expediente.Any(e => e.id == id);
         }
     }
 }
