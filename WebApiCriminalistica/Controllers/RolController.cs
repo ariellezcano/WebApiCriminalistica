@@ -27,6 +27,45 @@ namespace WebApiCriminalistica.Controllers
             _context = context;
         }
 
+        [HttpGet("lst")]
+        public async Task<ActionResult<Result<Rol>>> GetRol()
+        {
+
+            using (var DBcontext = _context)
+            {
+                try
+                {
+                    var consulta = DBcontext.Rol
+                        .AsNoTracking()
+                        .Where(rol => rol.id > 3 && rol.activo == true)
+                        .ToList();
+
+                    if (consulta.Count > 0)
+                    {
+                        res.data = consulta;
+                        res.code = "200";
+                        res.message = "Datos obtenidos correctamente";
+                    }
+                    else
+                    {
+                        res.data = consulta;
+                        res.code = "204";
+                        res.message = "No existen datos en la base de datos";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    res.error = "Error al obtener el dato " + ex.Message;
+                }
+
+
+                data = JsonConvert.SerializeObject(res);
+
+                return Ok(data);
+            }
+        }
+
+
         // GET: api/Rol
         [HttpGet("paginate/{pagina},{cantidad}")]
         public async Task<ActionResult<Result<Rol>>> GetRols(int pagina, int cantidad)
@@ -39,11 +78,12 @@ namespace WebApiCriminalistica.Controllers
             {
                 try
                 {
-                    var queryable = DBcontext.Rol
-                        .AsNoTracking()
-                        .Where(t => t.activo == true)
-                        .OrderBy(o => o.nombre)
-                        .AsQueryable();
+                    var queryable = DBcontext.Rol.AsNoTracking().Where(rol => rol.id > 3).AsQueryable();
+                    //var queryable = DBcontext.Rol
+                        //.AsNoTracking()
+                        //.Where(t => t.activo == true)
+                        //.OrderBy(o => o.nombre)
+                        //.AsQueryable();
 
                     double conteo = await queryable.CountAsync();
                     double TotalPaginas = Math.Ceiling(conteo / paginate.cantidadMostrar);
