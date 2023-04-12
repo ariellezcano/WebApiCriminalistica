@@ -355,7 +355,6 @@ namespace WebApiCriminalistica.Controllers
                         .Include(e => e.expedienteNavegacion.estadoNavegacion)
                         .Include(uC => uC.expedienteNavegacion.usuarioCreaNavegacion)
                         .Include(uM => uM.expedienteNavegacion.usuarioModificaNavegacion)
-                        //.Include(de => de.usuarioBajaNavegacion)
                         .AsNoTracking()
                         .Where(a => a.activo == true)
                         .OrderBy(ordenar => ordenar.expedienteNavegacion.fechaExpte)
