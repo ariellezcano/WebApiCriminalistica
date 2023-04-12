@@ -161,52 +161,54 @@ namespace WebApiCriminalistica.Controllers
         [HttpPost]
         public async Task<ActionResult<MovimientoExpte>> PostMovimientoExpte(MovimientoExpte expte)
         {
-            var expediente = expte.expte;
+           // var expediente = expte.expte;
             var tipoMoviento = expte.tipoMovimiento;
+           // var estado = expte.estadoExpte;
 
             using (var DBcontext = _context)
             {
                 try
                 {
-                    var verificar = DBcontext.MovimientoExpte.SingleOrDefault(r => r.expte == expediente && r.activo == true);
+                    // var verificar = DBcontext.MovimientoExpte.SingleOrDefault(r => r.expte == expediente && r.activo == true);
 
-                    if (verificar is null)
+                    //if (verificar is null)
+                    MovimientoExpte obj = new MovimientoExpte();
+                    // {
+                    if (tipoMoviento == "SALIDA")
                     {
-                        if (tipoMoviento == "ENTRADA") { 
-                            MovimientoExpte obj = new MovimientoExpte();
-                            obj.expte = expediente;
-                            obj.destinoPolicial = expte.destinoPolicial;
-                            obj.destinoNoPolicial = expte.destinoNoPolicial;
-                            obj.usuarioEnvia = expte.usuarioEnvia;
-                            obj.tipoMovimiento = expte.tipoMovimiento;
-                            obj.observaciones = expte.observaciones;
-                            obj.fechaEnvio = DateTime.Now;
-                            obj.activo = true;
-                        }
-                        if (tipoMoviento == "RECEPCION") 
-                        {
-                            MovimientoExpte obj = new MovimientoExpte();
-                            obj.expte = expediente;
-                            obj.destinoPolicial = expte.destinoPolicial;
-                            obj.destinoNoPolicial = expte.destinoNoPolicial;
-                            obj.usuarioEnvia = expte.usuarioEnvia;
-                            obj.tipoMovimiento = expte.tipoMovimiento;
-                            obj.observaciones = expte.observaciones;
-                            obj.fechaEnvio = DateTime.Now;
-                            obj.activo = true;
-                        }
-                        DBcontext.MovimientoExpte.Add(obj);
-                        await DBcontext.SaveChangesAsync();
+                        obj.expte = expte.expte;
+                        obj.destinoPolicial = expte.destinoPolicial;
+                        obj.destinoNoPolicial = expte.destinoNoPolicial;
+                        obj.usuarioEnvia = expte.usuarioEnvia;
+                        obj.tipoMovimiento = expte.tipoMovimiento;
+                        obj.observaciones = expte.observaciones;
+                        obj.fechaEnvio = DateTime.Now;
+                        obj.activo = true;
+                    }
+                    if (tipoMoviento == "RECEPCION")
+                    {
+                        obj.expte = expte.expte;
+                        obj.destinoPolicial = expte.destinoPolicial;
+                        obj.destinoNoPolicial = expte.destinoNoPolicial;
+                        obj.usuarioRecibe = expte.usuarioRecibe;
+                        obj.tipoMovimiento = expte.tipoMovimiento;
+                        obj.observaciones = expte.observaciones;
+                        obj.fechaRecepcion = DateTime.Now;
+                        obj.activo = true;
+                    }
 
-                        res.dato = obj;
-                        res.code = "200";
-                        res.message = "Dato insertado correctamente";
-                    }
-                    else
-                    {
-                        res.code = "204";
-                        res.message = "El dato ingresado ya existe en la base de datos";
-                    }
+                    DBcontext.MovimientoExpte.Add(obj);
+                    await DBcontext.SaveChangesAsync();
+
+                    res.dato = obj;
+                    res.code = "200";
+                    res.message = "Dato insertado correctamente";
+                    //}
+                    // else
+                    //{
+                    //res.code = "204";
+                    //res.message = "El dato ingresado ya existe en la base de datos";
+                    //}
                 }
                 catch (Exception ex)
                 {

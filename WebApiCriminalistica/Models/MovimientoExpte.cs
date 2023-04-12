@@ -18,7 +18,7 @@ namespace WebApiCriminalistica.Models
         public int? usuarioRecibe { get; set; }
         public string tipoMovimiento {get; set; }
         public string? observaciones { get; set; }
-        public string? estadoExpte { get; set; }
+        //public string? estadoExpte { get; set; }
         public Boolean activo { get; set; }
 
         [ForeignKey("expte")]
