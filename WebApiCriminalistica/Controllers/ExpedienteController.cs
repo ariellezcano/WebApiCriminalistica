@@ -134,7 +134,7 @@ namespace WebApiCriminalistica.Controllers
                         obj.peritoInterviniente = expediente.peritoInterviniente;
                         obj.tipoPericia = expediente.tipoPericia;
                         obj.estadoExpte = expediente.estadoExpte;
-                        obj.observaciones = expediente.observaciones;
+                        obj.observacion = expediente.observacion;
                         obj.fechaModificacion = expediente.fechaModificacion;
                         obj.usuarioModifica = expediente.usuarioModifica;
 
@@ -186,7 +186,7 @@ namespace WebApiCriminalistica.Controllers
                         obj.peritoInterviniente = expte.peritoInterviniente;
                         obj.tipoPericia = expte.tipoPericia;
                         obj.estadoExpte = expte.estadoExpte;
-                        obj.observaciones = expte.observaciones;
+                        obj.observacion = expte.observacion;
                         obj.fechaCreacion = DateTime.Now;
                         obj.usuarioCrea = expte.usuarioCrea;
                         obj.activo = true;

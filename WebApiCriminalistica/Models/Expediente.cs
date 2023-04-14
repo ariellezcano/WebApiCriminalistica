@@ -17,7 +17,7 @@ namespace WebApiCriminalistica.Models
         public int peritoInterviniente { get; set; }
         public string tipoPericia { get; set; }
         public int estadoExpte { get; set; }
-        public string? observaciones { get; set; }
+        public string? observacion { get; set; }
         public DateTime fechaCreacion { get; set; }
         public int usuarioCrea { get; set; }
         public DateTime? fechaModificacion { get; set; }
