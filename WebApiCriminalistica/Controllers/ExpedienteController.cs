@@ -27,9 +27,10 @@ namespace WebApiCriminalistica.Controllers
         }
 
         // GET: api/Expediente/1,2
-        [HttpGet("paginate/{pagina},{cantidad}")]
-        public async Task<ActionResult<Result<Expediente>>> GetExpediente(int pagina, int cantidad)
+        [HttpGet("paginate/{pagina},{cantidad},{unidad}")]
+        public async Task<ActionResult<Result<Expediente>>> GetExpediente(int pagina, int cantidad, int unidad)
         {
+            var unidadSistema = unidad;
             Paginate paginate = new Paginate();
             paginate.cantidadMostrar = cantidad;
             paginate.pagina = pagina;
@@ -40,7 +41,7 @@ namespace WebApiCriminalistica.Controllers
                 {
                     var queryable = DBcontext.Expediente
                         .AsNoTracking()
-                        .Where(t => t.activo == true)
+                        .Where(t => t.usuarioCreaNavegacion.sistema == unidadSistema && t.activo == true)
                         .OrderBy(o => o.fechaExpte)
                         .AsQueryable();
 

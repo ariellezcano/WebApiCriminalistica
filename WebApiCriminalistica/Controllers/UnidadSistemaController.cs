@@ -182,19 +182,19 @@ namespace WebApiCriminalistica.Controllers
             {
                 try
                 {
-                    var obj = DBcontext.Rol.SingleOrDefault(r => r.id == id);
+                    var obj = DBcontext.UnidadSistema.SingleOrDefault(r => r.id == id);
 
                     if (obj != null)
                     {
                         //baja logica
-                        obj.activo = false;
-                        DBcontext.Entry(obj).State = EntityState.Modified;
-                        await DBcontext.SaveChangesAsync();
+                        //obj.activo = false;
+                        //DBcontext.Entry(obj).State = EntityState.Modified;
+                        //await DBcontext.SaveChangesAsync();
 
                         //baja eliminar BD
                         // rol r = DBcontext.rol.Single(us => us.id == id);
-                        //DBcontext.Remove(obj);
-                        //await DBcontext.SaveChangesAsync();
+                        DBcontext.Remove(obj);
+                        await DBcontext.SaveChangesAsync();
 
                         res.code = "200";
                         res.message = "Dato eliminado correctamente";

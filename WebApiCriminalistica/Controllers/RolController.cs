@@ -21,7 +21,6 @@ namespace WebApiCriminalistica.Controllers
         public Result<Rol> res = new Result<Rol>();
         string data;
 
-
         public RolController(WebApiCriminalisticaContext context)
         {
             _context = context;
@@ -64,7 +63,6 @@ namespace WebApiCriminalistica.Controllers
                 return Ok(data);
             }
         }
-
 
         // GET: api/Rol
         [HttpGet("paginate/{pagina},{cantidad}")]
