@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApiCriminalistica.Models
 {
-    [Table("MOVIMIENTOEXPEDIENTE")]
+    [Table("MOVIMIENTOEXPTE")]
     public class MovimientoExpte
     {
         [Key]
