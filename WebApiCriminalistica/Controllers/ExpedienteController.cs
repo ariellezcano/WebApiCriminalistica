@@ -166,7 +166,7 @@ namespace WebApiCriminalistica.Controllers
         // POST: api/Expediente
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Expediente>> PostEstado(Expediente expte)
+        public async Task<ActionResult<Expediente>> PostExpte(Expediente expte)
         {
             var nota = expte.nroNota;
             using (var DBcontext = _context)
@@ -221,7 +221,7 @@ namespace WebApiCriminalistica.Controllers
 
         // DELETE: api/Expediente/5
         [HttpDelete("{id},{usuario}")]
-        public async Task<IActionResult> DeleteEstados(int id, int usuario)
+        public async Task<IActionResult> DeleteExpte(int id, int usuario)
         {
             using (var DBcontext = _context)
             {
