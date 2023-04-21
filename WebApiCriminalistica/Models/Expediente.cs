@@ -8,6 +8,8 @@ namespace WebApiCriminalistica.Models
     {
         [Key]
         public int id { get; set; }
+        [Required]
+        public int unidadCreacion { get; set; } // se usa para filtrar los datos de las distintas unidades
         public DateTime fechaExpte { get; set; }
         public string nroNota { get; set; }
         public string origenExpte { get; set; }

@@ -41,7 +41,7 @@ namespace WebApiCriminalistica.Controllers
                 {
                     var queryable = DBcontext.Expediente
                         .AsNoTracking()
-                        .Where(t => t.usuarioCreaNavegacion.sistema == unidadSistema && t.activo == true)
+                        .Where(t => t.unidadCreacion == unidadSistema && t.activo == true)
                         .OrderBy(o => o.fechaExpte)
                         .AsQueryable();
 
@@ -173,11 +173,12 @@ namespace WebApiCriminalistica.Controllers
             {
                 try
                 {
-                    var verificar = DBcontext.Expediente.SingleOrDefault(r => r.nroNota == nota);
+                    var verificar = DBcontext.Expediente.SingleOrDefault(r => r.nroNota == nota && r.unidadCreacion == expte.unidadCreacion);
 
                     if (verificar is null)
                     {
                         Expediente obj = new Expediente();
+                        obj.unidadCreacion = expte.unidadCreacion;
                         obj.fechaExpte = expte.fechaExpte;
                         obj.nroNota = nota;
                         obj.origenExpte = expte.origenExpte;

@@ -39,6 +39,7 @@ activo bit NOT NULL)
 
 CREATE TABLE EXPEDIENTE(
 id int NOT NULL IDENTITY PRIMARY KEY,
+unidadCreacion int NOT NULL,
 fechaExpte datetime NOT NULL,
 nroNota varchar(50) NOT NULL,
 origenExpte varchar(50) NOT NULL,
