@@ -8,6 +8,7 @@
         public int totalRegistros;
         public string code;
         public string message;
+        public string token;
         public string error;
     }
 }

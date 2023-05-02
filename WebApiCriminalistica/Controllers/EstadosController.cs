@@ -18,8 +18,16 @@ namespace WebApiCriminalistica.Controllers
     {
         private readonly WebApiCriminalisticaContext _context;
 
+        private readonly IConfiguration configuration;
+
         public Result<Estados> res = new Result<Estados>();
         string data;
+       
+        public EstadosController(IConfiguration configuration)
+        {
+
+            this.configuration = configuration;
+        }
 
         public EstadosController(WebApiCriminalisticaContext context)
         {
