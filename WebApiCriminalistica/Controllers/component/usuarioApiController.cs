@@ -26,7 +26,7 @@ namespace WebApiCriminalistica.Controllers.component
 
 
         [HttpPost()]
-        public async Task<ActionResult<Estados>> GetUsuarioApiJWT(authApi api)
+        public async Task<ActionResult<authApi>> GetUsuarioApiJWT(authApi api)
         {
 
             using (var DBcontext = _context)
