@@ -15,9 +15,9 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       //local unidad
-      //"applicationUrl": "http://10.125.30.248:7056;http://10.125.30.248:5056",
+      "applicationUrl": "http://10.125.30.248:7056;http://10.125.30.248:5056",
       //casa
-      "applicationUrl": "http://192.168.1.111:7056;http://192.168.1.111:5056",
+      //"applicationUrl": "http://192.168.1.111:7056;http://192.168.1.111:5056",
       //real 
       //"applicationUrl": "http://10.125.31.149:7056;http://10.125.31.149:5056",
       "environmentVariables": {
