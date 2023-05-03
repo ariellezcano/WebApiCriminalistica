@@ -5,7 +5,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebApiCriminalistica.Data;
-using WebApiCriminalistica.services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<WebApiCriminalisticaContext>(options =>
@@ -32,17 +31,6 @@ builder.Services.AddCors(options => {
 });
 
 
-//agregado para servicio JWT
-builder.Services.AddScoped<IUsuarioApi, usuarioApiService>();
-
-//agregado para autenticacion JWT
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
-    options.TokenValidationParameters = new TokenValidationParameters()
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:claveSecretaJWT"]))
-    };
-});
 
 var app = builder.Build();
 
@@ -59,10 +47,6 @@ app.UseAuthorization();
 
 //agregue para los cords
 app.UseCors(cors);
-
-//agregado para autenticacion JWT
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.MapControllers();
 
