@@ -78,7 +78,6 @@ namespace WebApiCriminalistica.Controllers
                     res.error = "Error al obtener el dato " + ex.Message;
                 }
 
-
                 data = JsonConvert.SerializeObject(res);
 
                 return Ok(data);
