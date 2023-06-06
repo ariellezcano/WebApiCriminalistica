@@ -132,6 +132,7 @@ namespace WebApiCriminalistica.Controllers
                             obj.apellido = perito.apellido;
                             obj.dni = perito.dni;
                             obj.tipoPerito = perito.tipoPerito;
+
                         }else if(obj.tipoPersona == "Personal Policial")
                         {
                             obj.tipoPerito = perito.tipoPerito;
