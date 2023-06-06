@@ -9,6 +9,7 @@ namespace WebApiCriminalistica.Models
         [Key]
         public int id { get; set; }
         public string nombre { get; set; }
+        public int? unidadCreacion { get; set; }
         public Boolean activo { get; set; }
     }
 }

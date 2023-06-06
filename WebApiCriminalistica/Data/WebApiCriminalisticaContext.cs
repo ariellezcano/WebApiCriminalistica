@@ -31,5 +31,7 @@ namespace WebApiCriminalistica.Data
         public DbSet<WebApiCriminalistica.Models.Expediente> Expediente { get; set; }
 
         public DbSet<WebApiCriminalistica.Models.MovimientoExpte> MovimientoExpte { get; set; }
+
+        public DbSet<WebApiCriminalistica.Models.Peritos> Peritos { get; set; }
     }
 }

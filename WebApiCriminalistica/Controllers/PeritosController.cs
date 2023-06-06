@@ -14,29 +14,23 @@ namespace WebApiCriminalistica.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EstadosController : ControllerBase
+    public class PeritosController : ControllerBase
     {
         private readonly WebApiCriminalisticaContext _context;
 
         private readonly IConfiguration configuration;
 
-        public Result<Estados> res = new Result<Estados>();
+        public Result<Peritos> res = new Result<Peritos>();
         string data;
-       
-        public EstadosController(IConfiguration configuration)
-        {
 
-            this.configuration = configuration;
-        }
-
-        public EstadosController(WebApiCriminalisticaContext context)
+        public PeritosController(WebApiCriminalisticaContext context)
         {
             _context = context;
         }
 
-        // GET: api/Estados
+        // GET: api/Peritos
         [HttpGet("paginate/{pagina},{cantidad},{unidad}")]
-        public async Task<ActionResult<Result<Estados>>> GetEstados(int pagina, int cantidad, int unidad)
+        public async Task<ActionResult<Result<Peritos>>> GetPeritos(int pagina, int cantidad, int unidad)
         {
             Paginate paginate = new Paginate();
             paginate.cantidadMostrar = cantidad;
@@ -46,7 +40,7 @@ namespace WebApiCriminalistica.Controllers
             {
                 try
                 {
-                    var queryable = DBcontext.Estados
+                    var queryable = DBcontext.Peritos
                         .AsNoTracking()
                         .Where(t => t.unidadCreacion == unidad && t.activo == true)
                         .OrderBy(o => o.nombre)
@@ -84,15 +78,15 @@ namespace WebApiCriminalistica.Controllers
             }
         }
 
-        // GET: api/Estados/5
+        // GET: api/Peritos/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Estados>> GetEstado(int id)
+        public async Task<ActionResult<Peritos>> GetPeritos(int id)
         {
             using (var DBcontext = _context)
             {
                 try
                 {
-                    var obj = DBcontext.Estados
+                    var obj = DBcontext.Peritos
                         .AsNoTracking()
                         .SingleOrDefault(r => r.id == id && r.activo == true);
 
@@ -119,25 +113,34 @@ namespace WebApiCriminalistica.Controllers
                 return Ok(data);
             }
         }
-        
-        // PUT: api/Estados/5
+
+        // PUT: api/Peritos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEstado(int id, Estados estado)
+        public async Task<IActionResult> PutPeritos(int id, Peritos perito)
         {
             using (var DBcontext = _context)
             {
                 try
                 {
-                    var obj = DBcontext.Estados.FirstOrDefault(r => r.id == id);
+                    var obj = DBcontext.Peritos.FirstOrDefault(r => r.id == id);
                     if (obj != null)
                     {
-                        obj.nombre = estado.nombre;
+                        if (obj.tipoPersona == "Civil")
+                        {
+                            obj.nombre = perito.nombre;
+                            obj.apellido = perito.apellido;
+                            obj.dni = perito.dni;
+                            obj.tipoPerito = perito.tipoPerito;
+                        }else if(obj.tipoPersona == "Personal Policial")
+                        {
+                            obj.tipoPerito = perito.tipoPerito;
+                        }
 
                         DBcontext.Entry(obj).State = EntityState.Modified;
                         await DBcontext.SaveChangesAsync();
 
-                        res.dato = obj;
+                        //res.dato = obj;
                         res.code = "200";
                         res.message = "Dato modificado correctamente";
                     }
@@ -157,26 +160,33 @@ namespace WebApiCriminalistica.Controllers
                 return Ok(data);
             }
         }
-               
-        // POST: api/Estados
+
+        // POST: api/Peritos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Estados>> PostEstado(Estados estados)
+        public async Task<ActionResult<Peritos>> PostPerito(Peritos perito)
         {
             using (var DBcontext = _context)
             {
                 try
                 {
-                    var verificar = DBcontext.Estados.SingleOrDefault(r => r.nombre == estados.nombre && r.unidadCreacion == estados.unidadCreacion && r.activo == true);
+                    var verificar = DBcontext.Peritos.SingleOrDefault(r => r.dni == perito.dni && r.unidadCreacion == perito.unidadCreacion && r.activo == true);
 
                     if (verificar is null)
                     {
-                        Estados obj = new Estados();
-                        obj.nombre = estados.nombre;
-                        obj.unidadCreacion = estados.unidadCreacion;
+                        Peritos obj = new Peritos();
+                        obj.nombre = perito.nombre;
+                        obj.apellido = perito.apellido;
+                        obj.dni = perito.dni;
+                        obj.tipoPersona = perito.tipoPersona;
+                        obj.idPersonalPolicial = perito.idPersonalPolicial;
+                        obj.tipoPerito = perito.tipoPerito;
+                        obj.fechaAlta = perito.fechaAlta;
+                        obj.usuarioAlta = perito.usuarioAlta;
+                        obj.unidadCreacion = perito.unidadCreacion;
                         obj.activo = true;
 
-                        DBcontext.Estados.Add(obj);
+                        DBcontext.Peritos.Add(obj);
                         await DBcontext.SaveChangesAsync();
 
                         //res.dato = obj;
@@ -201,21 +211,21 @@ namespace WebApiCriminalistica.Controllers
                 return Ok(data);
             }
         }
-
-        // DELETE: api/Estados/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEstados(int id)
+        // DELETE: api/Peritos/5
+        [HttpDelete("{id},{usuario}")]
+        public async Task<IActionResult> DeletePerito(int id, int usuario)
         {
             using (var DBcontext = _context)
             {
                 try
                 {
-                    var obj = DBcontext.Estados.SingleOrDefault(r => r.id == id);
+                    var obj = DBcontext.Peritos.SingleOrDefault(r => r.id == id);
 
                     if (obj != null)
                     {
                         //baja logica
-                        //entidad entity = DBcontext.entidad.SingleOrDefault(r => r.id == id);
+                        obj.fechaBaja = DateTime.Now;
+                        obj.usuarioBaja = usuario;
                         obj.activo = false;
                         DBcontext.Entry(obj).State = EntityState.Modified;
                         await DBcontext.SaveChangesAsync();
@@ -247,9 +257,8 @@ namespace WebApiCriminalistica.Controllers
             }
         }
 
-        // GET: api/Sistemas/filterSistemas/{criterio}
-        [HttpGet("filterEstado/{criterio},{unidad}")]
-        public async Task<ActionResult<Estados>> filter(string criterio, int unidad)
+        [HttpGet("filterPerito/{criterio},{unidad}")]
+        public async Task<ActionResult<Peritos>> filter(string criterio, int unidad)
         {
             try
             {
@@ -257,9 +266,9 @@ namespace WebApiCriminalistica.Controllers
                 {
                     if (!String.IsNullOrEmpty(criterio))
                     {
-                        var busqueda = await DBcontext.Estados
+                        var busqueda = await DBcontext.Peritos
                             .AsNoTracking()
-                            .Where(s => s.nombre.Contains(criterio) && s.unidadCreacion == unidad && s.activo == true)
+                            .Where(s => s.nombre.Contains(criterio) || s.apellido.Contains(criterio) || s.dni == Int64.Parse(criterio) && s.unidadCreacion == unidad && s.activo == true)
                             .ToListAsync();
 
                         if (busqueda.Count > 0)
@@ -289,9 +298,10 @@ namespace WebApiCriminalistica.Controllers
             return Ok(data);
         }
 
-        private bool EstadosExists(int id)
+
+        private bool PeritosExists(int id)
         {
-            return _context.Estados.Any(e => e.id == id);
+            return _context.Peritos.Any(e => e.id == id);
         }
     }
 }

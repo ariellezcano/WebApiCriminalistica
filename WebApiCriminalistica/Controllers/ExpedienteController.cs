@@ -30,7 +30,6 @@ namespace WebApiCriminalistica.Controllers
         [HttpGet("paginate/{pagina},{cantidad},{unidad}")]
         public async Task<ActionResult<Result<Expediente>>> GetExpediente(int pagina, int cantidad, int unidad)
         {
-            var unidadSistema = unidad;
             Paginate paginate = new Paginate();
             paginate.cantidadMostrar = cantidad;
             paginate.pagina = pagina;
@@ -41,7 +40,7 @@ namespace WebApiCriminalistica.Controllers
                 {
                     var queryable = DBcontext.Expediente
                         .AsNoTracking()
-                        .Where(t => t.unidadCreacion == unidadSistema && t.activo == true)
+                        .Where(t => t.unidadCreacion == unidad && t.activo == true)
                         .OrderBy(o => o.fechaExpte)
                         .AsQueryable();
 
@@ -267,8 +266,8 @@ namespace WebApiCriminalistica.Controllers
         }
 
         // GET: api/Expediente/filterExpediente/{criterio}
-        [HttpGet("filterExpediente/{criterio}")]
-        public async Task<ActionResult<Expediente>> filter(string criterio)
+        [HttpGet("filterExpediente/{criterio},{unidad}")]
+        public async Task<ActionResult<Expediente>> filter(string criterio, int unidad)
         {
             try
             {
@@ -278,7 +277,7 @@ namespace WebApiCriminalistica.Controllers
                     {
                         var busqueda = await DBcontext.Expediente
                             .AsNoTracking()
-                            .Where(s => s.nroIntervencion.Contains(criterio) || s.nroNota.Contains(criterio) && s.activo == true)
+                            .Where(s => s.nroIntervencion.Contains(criterio) || s.nroNota.Contains(criterio) && s.unidadCreacion == unidad && s.activo == true)
                             .ToListAsync();
 
                         if (busqueda.Count > 0)
@@ -310,7 +309,7 @@ namespace WebApiCriminalistica.Controllers
 
         [HttpGet("filterBusqAvanzada/{fecha1},{fecha2},{nroIntervencion},{nroNota}")]
         public async Task<ActionResult<Result<Expediente>>> FiltroBusquedaAvanzada(
-            string fecha1, string fecha2, string nroIntervencion, string nroNota)
+            string fecha1, string fecha2, string nroIntervencion, string nroNota, int unidad)
         {
 
             try
@@ -351,9 +350,8 @@ namespace WebApiCriminalistica.Controllers
                         .Include(e => e.estadoNavegacion)
                         .Include(uC => uC.usuarioCreaNavegacion)
                         .Include(uM => uM.usuarioModificaNavegacion)
-                        //.Include(de => de.usuarioBajaNavegacion)
                         .AsNoTracking()
-                        .Where(a => a.activo == true)
+                        .Where(a => a.unidadCreacion == unidad && a.activo == true)
                         .OrderBy(ordenar => ordenar.fechaExpte)
                         .ToListAsync();
 
