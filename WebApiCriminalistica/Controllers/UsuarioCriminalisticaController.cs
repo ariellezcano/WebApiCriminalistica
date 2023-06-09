@@ -27,8 +27,8 @@ namespace WebApiCriminalistica.Controllers
         }
 
         // GET: api/UsuarioCriminalistica
-        [HttpGet("paginate/{pagina},{cantidad}")]
-        public async Task<ActionResult<Result<UsuarioCriminalistica>>> GetUsuario(int pagina, int cantidad)
+        [HttpGet("paginate/{pagina},{cantidad},{unidad}")]
+        public async Task<ActionResult<Result<UsuarioCriminalistica>>> GetUsuario(int pagina, int cantidad, int unidad)
         {
             Paginate paginate = new Paginate();
             paginate.cantidadMostrar = cantidad;
@@ -42,7 +42,7 @@ namespace WebApiCriminalistica.Controllers
                         .AsNoTracking()
                         .Include(usuario => usuario.rolNavigation)
                         .OrderBy(s => s.apellido)
-                        .Where(usu => usu.baja == false).AsQueryable();
+                        .Where(usu => usu.baja == false && usu.sistema == unidad).AsQueryable();
 
                     double conteo = await queryable.CountAsync();
                     double TotalPaginas = Math.Ceiling(conteo / paginate.cantidadMostrar);
@@ -308,8 +308,8 @@ namespace WebApiCriminalistica.Controllers
         }
 
         // GET: api/UsuarioCriminalistica/filterUsuarios/{criterio}
-        [HttpGet("filterUsuarios/{criterio}")]
-        public async Task<ActionResult<Result<UsuarioCriminalistica>>> filter(string criterio)
+        [HttpGet("filterUsuarios/{criterio},{unidad}")]
+        public async Task<ActionResult<Result<UsuarioCriminalistica>>> filter(string criterio, int unidad)
         {
             try
             {
@@ -320,7 +320,7 @@ namespace WebApiCriminalistica.Controllers
                         var busqueda = await DBcontext.UsuarioCriminalistica
                             .AsNoTracking()
                             .Include(r => r.rolNavigation)
-                            .Where(s => s.apellido.Contains(criterio) || s.nombre.Contains(criterio) || s.norDni.ToString() == criterio)
+                            .Where(s => s.apellido.Contains(criterio) || s.nombre.Contains(criterio) || s.norDni.ToString() == criterio && s.sistema == unidad && s.activo == true)
                             .ToListAsync();
 
                         if (busqueda.Count > 0)
