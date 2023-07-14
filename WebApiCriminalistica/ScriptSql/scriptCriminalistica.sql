@@ -54,6 +54,7 @@ CREATE TABLE PERITOS
 	dni int NOT NULL,
 	tipoPersona nvarchar(25) NOT NULL,
 	idPersonalPolicial int NULL,
+	idPersonalCivil int NULL,
 	tipoPerito nvarchar(25) NULL,
 	fechaAlta datetime NOT NULL,
 	usuarioAlta int FOREIGN KEY REFERENCES USUARIOCRIMINALISTICA(id) NOT NULL,

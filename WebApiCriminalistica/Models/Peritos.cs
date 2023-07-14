@@ -13,6 +13,7 @@ namespace WebApiCriminalistica.Models
         public int dni { get; set; }
         public string tipoPersona { get; set; } // POLICIA O CIVIL
         public int? idPersonalPolicial { get; set; } // SE AGREGA SI EL PERITO ES PERSONAL POLICIAL
+        public int? idPersonalCivil { get; set; }
         public string tipoPerito { get; set; }
         public DateTime fechaAlta { get; set; }
         public int usuarioAlta {get; set; }

@@ -181,6 +181,7 @@ namespace WebApiCriminalistica.Controllers
                         obj.dni = perito.dni;
                         obj.tipoPersona = perito.tipoPersona;
                         obj.idPersonalPolicial = perito.idPersonalPolicial;
+                        obj.idPersonalCivil = perito.idPersonalCivil;
                         obj.tipoPerito = perito.tipoPerito;
                         obj.fechaAlta = perito.fechaAlta;
                         obj.usuarioAlta = perito.usuarioAlta;
