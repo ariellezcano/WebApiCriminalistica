@@ -46,7 +46,7 @@ namespace WebApiCriminalistica.Controllers
             {
                 try
                 {
-                    var queryable = DBcontext.Estados
+                   var queryable = DBcontext.Estados
                         .AsNoTracking()
                         .Where(t => t.unidadCreacion == unidad && t.activo == true)
                         .OrderBy(o => o.nombre)
