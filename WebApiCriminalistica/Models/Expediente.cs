@@ -24,10 +24,14 @@ namespace WebApiCriminalistica.Models
         public int usuarioCrea { get; set; }
         public DateTime? fechaModificacion { get; set; }
         public int? usuarioModifica { get; set; }
-        public DateTime fechaBaja { get; set; }
+        public DateTime? fechaBaja { get; set; }
         public int? usuarioBaja { get; set; }
         public Boolean activo { get; set; }
 
+
+        //cambios
+        [ForeignKey("peritoInterviniente")]
+        public virtual Peritos? perito { get; set; }
 
         [ForeignKey("estadoExpte")]
         public virtual Estados? estadoNavegacion { get; set; }
