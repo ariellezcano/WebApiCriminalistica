@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using WebApiCriminalistica.Components;
 using WebApiCriminalistica.Data;
@@ -40,6 +41,8 @@ namespace WebApiCriminalistica.Controllers
                 {
                     var queryable = DBcontext.Expediente
                         .AsNoTracking()
+                        .Include(e => e.estadoNavegacion)
+                        .Include(p => p.perito)
                         .Where(t => t.unidadCreacion == unidad && t.activo == true)
                         .OrderBy(o => o.fechaExpte)
                         .AsQueryable();
@@ -177,7 +180,10 @@ namespace WebApiCriminalistica.Controllers
                     if (verificar is null)
                     {
                         Expediente obj = new Expediente();
-                        obj.unidadCreacion = expte.unidadCreacion;
+
+                      //  obj = expte;
+
+                        obj.unidadCreacion =expte.unidadCreacion;
                         obj.fechaExpte = expte.fechaExpte;
                         obj.nroNota = nota;
                         obj.origenExpte = expte.origenExpte;
@@ -186,8 +192,12 @@ namespace WebApiCriminalistica.Controllers
                         obj.informeTecnico = expte.informeTecnico;
                         obj.peritoInterviniente = expte.peritoInterviniente;
                         obj.tipoPericia = expte.tipoPericia;
-                        obj.estadoExpte = expte.estadoExpte;
+                        obj.estadoExpte = 1;
                         obj.observacion = expte.observacion;
+
+                       
+
+
                         obj.fechaCreacion = DateTime.Now;
                         obj.usuarioCrea = expte.usuarioCrea;
                         obj.activo = true;
@@ -232,7 +242,7 @@ namespace WebApiCriminalistica.Controllers
                     {
                         //baja logica
                         //entidad entity = DBcontext.entidad.SingleOrDefault(r => r.id == id);
-                        obj.fechaBaja = DateTime.Now;
+                      //  obj.fechaBaja = DateTime.Now;
                         obj.usuarioBaja = usuario;
                         obj.activo = false;
                         DBcontext.Entry(obj).State = EntityState.Modified;

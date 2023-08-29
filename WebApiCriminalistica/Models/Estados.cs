@@ -11,5 +11,10 @@ namespace WebApiCriminalistica.Models
         public string nombre { get; set; }
         public int? unidadCreacion { get; set; }
         public Boolean activo { get; set; }
+
+        //cambios
+        [ForeignKey("unidadCreacion")]
+        public virtual UnidadSistema? unidad { get; set; }
     }
+    
 }

@@ -179,11 +179,11 @@ namespace WebApiCriminalistica.Controllers
                         obj.nombre = perito.nombre;
                         obj.apellido = perito.apellido;
                         obj.dni = perito.dni;
-                        obj.tipoPersona = perito.tipoPersona;
+                        obj.tipoPersona = "policia";
                         obj.idPersonalPolicial = perito.idPersonalPolicial;
                         obj.idPersonalCivil = perito.idPersonalCivil;
                         obj.tipoPerito = perito.tipoPerito;
-                        obj.fechaAlta = perito.fechaAlta;
+                        obj.fechaAlta = DateTime.Now;
                         obj.usuarioAlta = perito.usuarioAlta;
                         obj.unidadCreacion = perito.unidadCreacion;
                         obj.activo = true;
