@@ -36,7 +36,7 @@ namespace WebApiCriminalistica.Controllers
                 {
                     var consulta = DBcontext.Rol
                         .AsNoTracking()
-                        .Where(rol => rol.id > 3 && rol.activo == true)
+                        .Where(rol => rol.nombre != "MANAGER" && rol.activo == true)
                         .ToList();
 
                     if (consulta.Count > 0)

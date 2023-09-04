@@ -192,7 +192,7 @@ namespace WebApiCriminalistica.Controllers
                         obj.informeTecnico = expte.informeTecnico;
                         obj.peritoInterviniente = expte.peritoInterviniente;
                         obj.tipoPericia = expte.tipoPericia;
-                        obj.estadoExpte = 1;
+                        obj.estadoExpte = expte.estadoExpte;
                         obj.observacion = expte.observacion;
 
                        
@@ -241,8 +241,8 @@ namespace WebApiCriminalistica.Controllers
                     if (obj != null)
                     {
                         //baja logica
-                        //entidad entity = DBcontext.entidad.SingleOrDefault(r => r.id == id);
-                      //  obj.fechaBaja = DateTime.Now;
+                        
+                        obj.fechaBaja = DateTime.Now;
                         obj.usuarioBaja = usuario;
                         obj.activo = false;
                         DBcontext.Entry(obj).State = EntityState.Modified;
@@ -287,6 +287,8 @@ namespace WebApiCriminalistica.Controllers
                     {
                         var busqueda = await DBcontext.Expediente
                             .AsNoTracking()
+                            .Include(s=>s.estadoNavegacion)
+                            .Include(j=>j.perito)
                             .Where(s => s.nroIntervencion.Contains(criterio) || s.nroNota.Contains(criterio) && s.unidadCreacion == unidad && s.activo == true)
                             .ToListAsync();
 
