@@ -138,8 +138,10 @@ namespace WebApiCriminalistica.Controllers
                         obj.tipoPericia = expediente.tipoPericia;
                         obj.estadoExpte = expediente.estadoExpte;
                         obj.observacion = expediente.observacion;
+                        obj.numerointerno = expediente.numerointerno;
                         obj.fechaModificacion = expediente.fechaModificacion;
                         obj.usuarioModifica = expediente.usuarioModifica;
+
 
                         DBcontext.Entry(obj).State = EntityState.Modified;
                         await DBcontext.SaveChangesAsync();
@@ -194,8 +196,9 @@ namespace WebApiCriminalistica.Controllers
                         obj.tipoPericia = expte.tipoPericia;
                         obj.estadoExpte = expte.estadoExpte;
                         obj.observacion = expte.observacion;
+                        obj.numerointerno = expte.numerointerno;
 
-                       
+
 
 
                         obj.fechaCreacion = DateTime.Now;
@@ -397,6 +400,70 @@ namespace WebApiCriminalistica.Controllers
         private bool ExpedienteExists(int id)
         {
             return _context.Expediente.Any(e => e.id == id);
+        }
+
+
+
+        // GET: api/Expediente/5
+        [HttpGet("nroInterno")]
+        public async Task<ActionResult<Expediente>> GetExpedienteNroInterno()
+        {
+            using (var DBcontext = _context)
+            {
+                string annoAtual = DateTime.Now.Year.ToString();
+                string Atual = annoAtual.Substring(annoAtual.Length -2);
+
+                try
+                {
+                    var obj = DBcontext.Expediente
+                       
+                        .OrderByDescending(r => r.id)
+                        .FirstOrDefault();
+
+                    if (obj != null)
+                    { 
+
+                        string[] datoscortados = obj.numerointerno.Split('-');
+                    var interno = datoscortados[0];
+
+                    var anno = datoscortados[1];
+
+                    int suma=0;
+                    var internoNuevo="";
+                    if (anno.Equals(Atual))
+                    {
+                         suma = Convert.ToInt32(interno) + 1;
+                        internoNuevo = Convert.ToString(suma) + "-" + anno;
+                    }
+                    else
+                    {
+                      
+                        internoNuevo =  "1-" + Atual;
+                    }
+                     
+
+                    if (obj != null)
+                    
+                        res.dato = internoNuevo;
+                        res.code = "200";
+                        res.message = "Dato obtenido correctamente";
+                    }
+                    else if (obj is null)
+                    {
+                        res.dato = "510-23";
+                        res.code = "204";
+                        res.message = "No existen datos en la base de datos";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    res.error = "Error al obtener el dato " + ex.Message;
+                }
+
+                data = JsonConvert.SerializeObject(res);
+
+                return Ok(data);
+            }
         }
     }
 }

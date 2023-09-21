@@ -27,6 +27,7 @@ namespace WebApiCriminalistica.Models
         public DateTime? fechaBaja { get; set; }
         public int? usuarioBaja { get; set; }
         public Boolean activo { get; set; }
+        public string numerointerno { get; set; }
 
 
         //cambios
