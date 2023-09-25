@@ -43,6 +43,7 @@ namespace WebApiCriminalistica.Controllers
                         .AsNoTracking()
                         .Include(e => e.estadoNavegacion)
                         .Include(p => p.perito)
+                        .Include(p=>p.personal)   
                         .Where(t => t.unidadCreacion == unidad && t.activo == true)
                         .OrderBy(o => o.fechaExpte)
                         .AsQueryable();
@@ -141,6 +142,7 @@ namespace WebApiCriminalistica.Controllers
                         obj.numerointerno = expediente.numerointerno;
                         obj.fechaModificacion = expediente.fechaModificacion;
                         obj.usuarioModifica = expediente.usuarioModifica;
+                        obj.personalInterviniente = expediente.personalInterviniente;
 
 
                         DBcontext.Entry(obj).State = EntityState.Modified;
@@ -197,6 +199,7 @@ namespace WebApiCriminalistica.Controllers
                         obj.estadoExpte = expte.estadoExpte;
                         obj.observacion = expte.observacion;
                         obj.numerointerno = expte.numerointerno;
+                        obj.personalInterviniente = expte.personalInterviniente;
 
 
 

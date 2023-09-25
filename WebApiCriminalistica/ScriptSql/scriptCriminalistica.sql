@@ -86,6 +86,7 @@ CREATE TABLE EXPEDIENTE
 	usuarioBaja int FOREIGN KEY REFERENCES USUARIOCRIMINALISTICA(id),
 	activo bit NOT NULL,
 	numerointerno varchar(50) NULL,
+	personalInterviniente varchar(150) NULL,
 );
 
 CREATE TABLE MOVIMIENTOEXPTE
