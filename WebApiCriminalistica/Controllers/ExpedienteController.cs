@@ -42,8 +42,7 @@ namespace WebApiCriminalistica.Controllers
                     var queryable = DBcontext.Expediente
                         .AsNoTracking()
                         .Include(e => e.estadoNavegacion)
-                        .Include(p => p.perito)
-                        .Include(p=>p.personal)   
+                        .Include(p => p.perito)   
                         .Where(t => t.unidadCreacion == unidad && t.activo == true)
                         .OrderBy(o => o.fechaExpte)
                         .AsQueryable();

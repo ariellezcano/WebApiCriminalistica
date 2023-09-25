@@ -29,6 +29,8 @@ namespace WebApiCriminalistica.Models
         public Boolean activo { get; set; }
         public string numerointerno { get; set; }
 
+        public string? personalInterviniente { get; set; }
+
 
         //cambios
         [ForeignKey("peritoInterviniente")]
