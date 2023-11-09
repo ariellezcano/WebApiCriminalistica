@@ -294,7 +294,7 @@ namespace WebApiCriminalistica.Controllers
                             .AsNoTracking()
                             .Include(s=>s.estadoNavegacion)
                             .Include(j=>j.perito)
-                            .Where(s => s.nroIntervencion.Contains(criterio) || s.nroNota.Contains(criterio) && s.unidadCreacion == unidad && s.activo == true)
+                            .Where(s => s.nroIntervencion.Contains(criterio) || s.nroNota.Contains(criterio) ||s.numerointerno.Contains(criterio) && s.unidadCreacion == unidad && s.activo == true)
                             .ToListAsync();
 
                         if (busqueda.Count > 0)
@@ -407,8 +407,8 @@ namespace WebApiCriminalistica.Controllers
 
 
         // GET: api/Expediente/5
-        [HttpGet("nroInterno")]
-        public async Task<ActionResult<Expediente>> GetExpedienteNroInterno()
+        [HttpGet("nroInterno/{unidad}")]
+        public async Task<ActionResult<Expediente>> GetExpedienteNroInterno(int unidad)
         {
             using (var DBcontext = _context)
             {
@@ -420,6 +420,7 @@ namespace WebApiCriminalistica.Controllers
                     var obj = DBcontext.Expediente
                        
                         .OrderByDescending(r => r.id)
+                        .Where(r => r.unidadCreacion == unidad)
                         .FirstOrDefault();
 
                     if (obj != null)
