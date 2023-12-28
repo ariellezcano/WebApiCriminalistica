@@ -142,7 +142,7 @@ namespace WebApiCriminalistica.Controllers
                         obj.fechaModificacion = expediente.fechaModificacion;
                         obj.usuarioModifica = expediente.usuarioModifica;
                         obj.personalInterviniente = expediente.personalInterviniente;
-
+                        obj.fechaBaja2 = expediente.fechaBaja2;
 
                         DBcontext.Entry(obj).State = EntityState.Modified;
                         await DBcontext.SaveChangesAsync();
@@ -199,7 +199,7 @@ namespace WebApiCriminalistica.Controllers
                         obj.observacion = expte.observacion;
                         obj.numerointerno = expte.numerointerno;
                         obj.personalInterviniente = expte.personalInterviniente;
-
+                        obj.fechaBaja2 = expte.fechaBaja2;
 
 
 
